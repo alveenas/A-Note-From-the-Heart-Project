@@ -109,7 +109,7 @@
 
   /* Shooting stars (behind everything) */
   .shooting-stars{
-    z-index:2; /* content is z-index 10 */
+    z-index:2; /* still behind content because content is z-index 10 */
     overflow:hidden;
   }
   .shooting-stars span{
@@ -136,6 +136,7 @@
     filter:blur(1px);
     opacity:.7;
   }
+  /* staggered positions + delays */
   .shooting-stars span:nth-child(1){ top:12%; left:-30%; animation-delay:0s; animation-duration:8s; }
   .shooting-stars span:nth-child(2){ top:28%; left:-50%; animation-delay:2.2s; animation-duration:9s; }
   .shooting-stars span:nth-child(3){ top:44%; left:-40%; animation-delay:4.2s; animation-duration:8.5s; }
@@ -154,7 +155,7 @@
     max-width:920px;
     margin:0 auto;
     position:relative;
-    z-index:10;
+    z-index:10; /* ensures content is above shooting stars */
   }
 
   .header{
@@ -185,18 +186,42 @@
     letter-spacing:.2px;
   }
 
+  /* Make top text feel a bit more "glowy" and noticeable */
   .tagline{
-    color:rgba(255,255,255,.85);
-    font-size:15px;
+    color:rgba(255,255,255,.92);
+    font-size:15.5px;
     margin:0 0 6px;
+    text-shadow:0 10px 25px rgba(0,0,0,.35);
   }
 
   .mission{
-    color:rgba(255,255,255,.92);
-    font-size:14px;
-    max-width:660px;
+    color:rgba(255,255,255,.98);
+    font-size:14.5px;
+    font-weight:600;
+    max-width:700px;
+    margin:0 auto 10px;
+    line-height:1.5;
+    text-shadow:0 10px 25px rgba(0,0,0,.32);
+  }
+
+  /* Instagram blurb: smaller + less noticeable */
+  .ig-blurb{
+    color:rgba(255,255,255,.62);
+    font-size:12px;
+    max-width:760px;
     margin:0 auto 16px;
-    line-height:1.45;
+    line-height:1.35;
+  }
+  .ig-blurb a{
+    color:rgba(255,255,255,.72);
+    font-weight:600;
+    text-decoration:none;
+    border-bottom:1px solid rgba(255,255,255,.18);
+    padding-bottom:1px;
+  }
+  .ig-blurb a:hover{
+    color:rgba(255,255,255,.85);
+    border-bottom-color:rgba(255,255,255,.35);
   }
 
   .card{
@@ -227,6 +252,7 @@
     overflow:hidden;
   }
 
+  /* subtle glow edge */
   #note::before{
     content:"";
     position:absolute;
@@ -252,12 +278,15 @@
   }
 
   /* Fade-in for each new note */
-  .note-fade{ animation:noteFade .35s ease; }
+  .note-fade{
+    animation:noteFade .35s ease;
+  }
   @keyframes noteFade{
     from{ opacity:0; transform:translateY(6px); }
     to{ opacity:1; transform:none; }
   }
 
+  /* Primary button: "starlight" */
   .primary-btn{
     display:block;
     margin:14px auto 10px;
@@ -368,10 +397,13 @@
   #crisis-popup a{color:#1b3cff;text-decoration:none}
   #crisis-popup a:hover{text-decoration:underline}
 
+  /* Mobile polish */
   @media(max-width:520px){
     body{padding:18px 12px 190px}
     h1{font-size:26px}
-    .mission{font-size:13px;padding:0 6px}
+    .mission{font-size:13.5px;padding:0 6px}
+    .tagline{font-size:14.5px}
+    .ig-blurb{font-size:11.5px;padding:0 6px}
     .primary-btn{width:100%}
     .action-row{gap:8px}
     .action-row .secondary-btn{width:100%}
@@ -392,6 +424,7 @@
 
 <div class="bg-layer constellations" aria-hidden="true">
   <svg viewBox="0 0 1200 220" preserveAspectRatio="none">
+    <!-- constellation 1 -->
     <line class="const-line" x1="140" y1="150" x2="240" y2="95"/>
     <line class="const-line" x1="240" y1="95"  x2="340" y2="125"/>
     <line class="const-line" x1="340" y1="125" x2="420" y2="70"/>
@@ -400,6 +433,7 @@
     <circle class="const-star" cx="340" cy="125" r="2.8"/>
     <circle class="const-star" cx="420" cy="70"  r="3.4"/>
 
+    <!-- constellation 2 -->
     <line class="const-line" x1="760" y1="155" x2="840" y2="110"/>
     <line class="const-line" x1="840" y1="110" x2="930" y2="140"/>
     <line class="const-line" x1="930" y1="140" x2="1010" y2="90"/>
@@ -408,6 +442,7 @@
     <circle class="const-star" cx="930" cy="140" r="2.7"/>
     <circle class="const-star" cx="1010" cy="90" r="3.5"/>
 
+    <!-- little cluster -->
     <line class="const-line" x1="560" y1="90" x2="600" y2="60"/>
     <line class="const-line" x1="600" y1="60" x2="650" y2="80"/>
     <circle class="const-star" cx="560" cy="90" r="2.6"/>
@@ -420,12 +455,19 @@
   <span></span><span></span><span></span><span></span>
 </div>
 
+<!-- Content -->
 <div class="wrap">
   <div class="header">
     <div class="heart" aria-hidden="true">♥</div>
     <h1>A Note From the Heart Project</h1>
     <p class="tagline">A little spark for the nights that feel heavy.</p>
     <p class="mission">A place where strangers can leave a gentle note to light up someone's day :)</p>
+
+    <p class="ig-blurb">
+      Follow
+      <a href="https://instagram.com/anotefromtheheartproject" target="_blank" rel="noopener">@anotefromtheheartproject</a>
+      on Instagram for a chance for your note to be featured! :)
+    </p>
   </div>
 
   <div class="card">
@@ -476,6 +518,7 @@
   </footer>
 </div>
 
+<!-- Crisis Support -->
 <div id="crisis-tab" onclick="toggleCrisis()">Need help now?</div>
 <div id="crisis-popup" aria-live="polite">
   <h3>You deserve support</h3>
