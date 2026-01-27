@@ -87,12 +87,6 @@ body{
   letter-spacing:.25em;
   font-size:12px;
   cursor:pointer;
-  transition:.3s;
-}
-
-.nav-btn:hover{
-  background:rgba(255,255,255,.18);
-  box-shadow:0 0 20px white;
 }
 
 .top-heart{
@@ -103,23 +97,7 @@ body{
 }
 
 @keyframes heartPulse{
-  0%{opacity:.6; transform:scale(1)}
-  50%{opacity:1; transform:scale(1.4)}
-  100%{opacity:.6; transform:scale(1)}
-}
-
-/* COUNT */
-#count{
-  font-size:12px;
-  letter-spacing:.35em;
-  opacity:.7;
-  text-shadow:0 0 14px white;
-  animation:countGlow 2.5s ease-in-out infinite alternate;
-}
-
-@keyframes countGlow{
-  from{text-shadow:0 0 8px white}
-  to{text-shadow:0 0 22px white}
+  50%{transform:scale(1.4)}
 }
 
 /* LAYOUT */
@@ -133,10 +111,11 @@ body{
   justify-content:center;
   gap:22px;
   text-align:center;
+  padding:20px;
 }
 
 .title{
-  font-size:44px;
+  font-size:36px;
   letter-spacing:.25em;
   text-shadow:0 0 25px white;
 }
@@ -144,7 +123,6 @@ body{
 .subtitle{
   max-width:520px;
   font-size:15px;
-  letter-spacing:.12em;
   opacity:.9;
   line-height:1.7;
 }
@@ -157,7 +135,6 @@ input, textarea{
   border:1px solid rgba(255,255,255,.4);
   border-radius:14px;
   color:white;
-  font-family:"Inter";
   font-size:14px;
   outline:none;
 }
@@ -167,18 +144,12 @@ textarea{
   resize:none;
 }
 
-input::placeholder,
-textarea::placeholder{
-  color:rgba(255,255,255,.6);
-}
-
 /* TAGS */
 .tags{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
   justify-content:center;
-  margin-top:6px;
 }
 
 .tag{
@@ -187,49 +158,67 @@ textarea::placeholder{
   border-radius:999px;
   cursor:pointer;
   font-size:12px;
-  letter-spacing:.1em;
   opacity:.6;
-  transition:.25s;
 }
-
-.tag:hover{opacity:.9}
 
 .tag.active{
   background:white;
   color:#b11b3a;
   opacity:1;
-  box-shadow:0 0 12px white;
 }
 
 /* BUTTONS */
 .submit-btn{
   margin-top:14px;
-  padding:12px 36px;
+  padding:12px 32px;
   border-radius:999px;
   border:1px solid rgba(255,255,255,.4);
   background:rgba(255,255,255,.15);
   color:white;
-  letter-spacing:.25em;
+  letter-spacing:.2em;
   cursor:pointer;
-  transition:.3s;
 }
 
-.submit-btn:hover{
-  background:rgba(255,255,255,.28);
-  box-shadow:0 0 30px white;
-}
-
-/* HEART ANIMATION */
+/* HEARTS */
 .fly-heart{
   position:absolute;
   color:#ff2f5b;
   font-size:18px;
-  animation:fly 1.6s ease forwards;
+  animation:fly 1.4s ease forwards;
 }
 
 @keyframes fly{
-  0%{transform:translateY(0) scale(1); opacity:1}
-  100%{transform:translateY(-160px) scale(1.8); opacity:0}
+  to{transform:translateY(-160px) scale(1.8); opacity:0}
+}
+
+/* FEEDBACK POPUP */
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+}
+
+.popup-box{
+  background:#0b1026;
+  padding:26px;
+  border-radius:20px;
+  width:90%;
+  max-width:420px;
+  text-align:center;
+  box-shadow:0 30px 80px rgba(0,0,0,.8);
+}
+
+.popup textarea{
+  width:100%;
+  min-height:120px;
+}
+
+.popup button{
+  margin-top:12px;
 }
 </style>
 </head>
@@ -244,7 +233,6 @@ textarea::placeholder{
     <span class="top-heart">♥</span>
     <button class="nav-btn" onclick="location.href='about.html'">ABOUT</button>
   </div>
-  <div id="count">LOADING</div>
 </div>
 
 <div class="wrap">
@@ -259,7 +247,7 @@ textarea::placeholder{
   <input id="title" placeholder="title (optional)">
   <textarea id="message" placeholder="your note..."></textarea>
 
-  <div class="tags" id="tags">
+  <div class="tags">
     <div class="tag">kindness</div>
     <div class="tag">motivational</div>
     <div class="tag">silly</div>
@@ -269,81 +257,88 @@ textarea::placeholder{
   </div>
 
   <button class="submit-btn" onclick="submitNote()">SEND</button>
-  <button class="submit-btn" onclick="location.href='feedback.html'">
-    MESSAGE THE CREATOR
-  </button>
+  <button class="submit-btn" onclick="openPopup()">MESSAGE THE CREATOR</button>
+</div>
+
+<!-- FEEDBACK POPUP -->
+<div class="popup" id="popup">
+  <div class="popup-box">
+    <h3>leave a note for me</h3>
+    <p style="opacity:.8;font-size:14px">
+      anything is welcome. thank you for being here.
+    </p>
+    <textarea id="feedbackMsg" placeholder="your message..."></textarea>
+    <br>
+    <button class="submit-btn" onclick="sendFeedback()">SEND</button>
+    <button class="submit-btn" onclick="closePopup()">CLOSE</button>
+  </div>
 </div>
 
 <script>
 // STARS
-const symbols = ["✦","✧","⋆","·"];
+const symbols=["✦","✧","⋆","·"];
 for(let i=0;i<120;i++){
   const s=document.createElement("div");
-  s.className = Math.random()>.8 ? "star big-star" : "star";
-  s.innerText = symbols[Math.floor(Math.random()*symbols.length)];
+  s.className=Math.random()>.8?"star big-star":"star";
+  s.innerText=symbols[Math.floor(Math.random()*symbols.length)];
   s.style.left=Math.random()*100+"%";
   s.style.top=Math.random()*100+"%";
-  s.style.animationDelay=Math.random()*6+"s";
-  document.getElementById("stars").appendChild(s);
+  stars.appendChild(s);
 }
 
-// COUNT
-fetch("/count")
-.then(r=>r.json())
-.then(d=>{
-  const el=document.getElementById("count");
-  const text=d.total+" NOTES SHARED";
-  let i=0,dir=1;
-  function loop(){
-    el.innerText=text.slice(0,i);
-    if(dir===1){i++; if(i>text.length){dir=-1; setTimeout(loop,2400); return;}}
-    else{i--; if(i<0){dir=1; setTimeout(loop,1400); return;}}
-    setTimeout(loop,150);
-  }
-  loop();
-});
-
-// TAG SELECT
+// TAGS
 document.querySelectorAll(".tag").forEach(t=>{
   t.onclick=()=>t.classList.toggle("active");
 });
 
-// SUBMIT
+// SUBMIT NOTE
 function submitNote(){
-  const title=document.getElementById("title").value;
-  const msg=document.getElementById("message").value;
+  const title=titleEl.value;
+  const msg=message.value;
   const tags=[...document.querySelectorAll(".tag.active")].map(t=>t.innerText);
 
-  if(!msg.trim()) return alert("Write something first.");
+  if(!msg.trim()) return alert("write something first.");
 
   fetch("/submit",{
     method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ title, message:msg, tags })
-  }).then(res=>{
-    if(!res.ok) throw 1;
-
-    // flying hearts
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({title,message:msg,tags})
+  }).then(()=>{
     for(let i=0;i<6;i++){
       const h=document.createElement("div");
       h.className="fly-heart";
       h.innerText="♥";
       h.style.left=50+Math.random()*80-40+"%";
       h.style.top="60%";
-      h.style.animationDelay=i*0.12+"s";
       document.body.appendChild(h);
-      setTimeout(()=>h.remove(),1600);
+      setTimeout(()=>h.remove(),1400);
     }
 
-    document.getElementById("title").value="";
-    document.getElementById("message").value="";
-
+    titleEl.value="";
+    message.value="";
     setTimeout(()=>{
       alert("somewhere, someone will read this when they need it 💗");
       location.href="explore.html";
-    },900);
-  }).catch(()=>{
-    alert("Something went wrong. Try again.");
+    },700);
+  });
+}
+
+// POPUP
+function openPopup(){ popup.style.display="flex"; }
+function closePopup(){ popup.style.display="none"; }
+
+function sendFeedback(){
+  const msg=feedbackMsg.value;
+  if(!msg.trim()) return;
+
+  fetch("/feedback",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:msg})
+  }).then(()=>{
+    feedbackMsg.value="";
+    closePopup();
+    alert("thank you for telling me 💗");
   });
 }
 </script>

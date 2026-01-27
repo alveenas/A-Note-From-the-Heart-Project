@@ -62,44 +62,36 @@ body{
 /* TOP BAR */
 .top-bar{
   position:absolute;
-  top:20px;
+  top:14px;
   left:50%;
   transform:translateX(-50%);
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:8px;
+  gap:6px;
   z-index:20;
 }
 
 .nav-row{
   display:flex;
-  gap:18px;
+  gap:14px;
 }
 
 .nav-btn{
-  padding:10px 26px;
+  padding:8px 20px;
   border:1px solid rgba(255,255,255,.4);
   border-radius:999px;
   background:rgba(255,255,255,.08);
   color:white;
   letter-spacing:.25em;
-  font-size:12px;
+  font-size:11px;
   cursor:pointer;
-  transition:.3s;
 }
 
-.nav-btn:hover{
-  background:rgba(255,255,255,.18);
-  box-shadow:0 0 20px white;
-}
-
-/* COUNT */
 #count{
-  font-size:12px;
-  letter-spacing:.35em;
+  font-size:11px;
+  letter-spacing:.3em;
   opacity:.7;
-  text-shadow:0 0 14px white;
 }
 
 /* LAYOUT */
@@ -111,25 +103,25 @@ body{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:22px;
+  gap:14px;
   text-align:center;
+  padding:10px;
 }
 
 /* FILTERS */
 .filters{
   display:flex;
-  gap:10px;
+  gap:6px;
   flex-wrap:wrap;
   justify-content:center;
 }
 
 .filter{
-  padding:6px 14px;
+  padding:5px 12px;
   border:1px solid rgba(255,255,255,.4);
   border-radius:999px;
   cursor:pointer;
-  font-size:12px;
-  letter-spacing:.1em;
+  font-size:11px;
   opacity:.6;
 }
 
@@ -137,80 +129,71 @@ body{
   background:white;
   color:#b11b3a;
   opacity:1;
-  box-shadow:0 0 12px white;
 }
 
 /* NOTE CARD */
 .note-box{
+  width:100%;
   max-width:720px;
-  padding:36px 42px;
+  padding:20px;
   background:rgba(255,255,255,.08);
   border:1px solid rgba(255,255,255,.35);
-  border-radius:22px;
+  border-radius:18px;
   box-shadow:0 30px 80px rgba(0,0,0,.6);
   backdrop-filter: blur(6px);
+  display:flex;
+  flex-direction:column;
+  max-height:55vh;
 }
 
 .note-title{
-  font-size:18px;
+  font-size:16px;
   letter-spacing:.2em;
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
 
 .note-date{
-  font-size:12px;
-  letter-spacing:.15em;
+  font-size:11px;
   opacity:.6;
-  margin-bottom:14px;
+  margin-bottom:10px;
 }
 
 .note-message{
-  font-size:20px;
+  font-size:16px;
   line-height:1.6;
   white-space:pre-wrap;
-}
-
-.note-likes{
-  margin-top:14px;
-  font-size:12px;
-  opacity:.65;
-  letter-spacing:.15em;
+  overflow-y:auto;
+  padding-right:6px;
+  flex:1;
 }
 
 /* ACTIONS */
 .actions{
   display:flex;
-  gap:16px;
-  margin-top:22px;
+  gap:10px;
+  margin-top:10px;
   flex-wrap:wrap;
   justify-content:center;
 }
 
 .main-btn{
-  padding:14px 34px;
+  padding:10px 22px;
   border-radius:999px;
   border:1px solid rgba(255,255,255,.45);
   background:rgba(255,255,255,.12);
   color:white;
-  font-size:12px;
-  letter-spacing:.25em;
+  font-size:11px;
+  letter-spacing:.2em;
   cursor:pointer;
 }
 
-.main-btn:hover{
-  background:rgba(255,255,255,.25);
-  box-shadow:0 0 25px white;
-}
-
 .report-btn{
-  padding:12px 22px;
+  padding:10px 18px;
   border-radius:999px;
   border:1px solid rgba(255,255,255,.3);
   background:transparent;
   color:white;
-  font-size:11px;
-  letter-spacing:.2em;
-  cursor:pointer;
+  font-size:10px;
   opacity:.6;
 }
 
@@ -224,6 +207,12 @@ body{
 
 @keyframes floatUp{
   to{transform:translateY(-120px) scale(1.5); opacity:0}
+}
+
+/* MOBILE EXTRA SAFETY */
+@media(max-width:600px){
+  .note-box{max-height:50vh}
+  .note-message{font-size:15px}
 }
 </style>
 </head>
@@ -256,9 +245,6 @@ body{
     <div class="note-title" id="noteTitle">LOADING</div>
     <div class="note-date" id="noteDate"></div>
     <div class="note-message" id="noteMessage"></div>
-    <div class="note-likes" id="noteLikes">
-      someone else once needed this too
-    </div>
   </div>
 
   <div class="actions">
@@ -275,7 +261,7 @@ let currentTag="all";
 
 /* STARS */
 const symbols=["✦","✧","⋆","·"];
-for(let i=0;i<140;i++){
+for(let i=0;i<120;i++){
   const s=document.createElement("div");
   s.className=Math.random()>.8?"star big-star":"star";
   s.innerText=symbols[Math.floor(Math.random()*symbols.length)];
@@ -286,9 +272,7 @@ for(let i=0;i<140;i++){
 }
 
 /* COUNT */
-fetch("/count")
-.then(r=>r.json())
-.then(d=>{
+fetch("/count").then(r=>r.json()).then(d=>{
   count.innerText=d.total+" NOTES SHARED";
 });
 
@@ -310,38 +294,33 @@ function loadNote(){
       currentId=d.id;
       noteTitle.innerText=d.title||"";
       noteMessage.innerText=d.message||"";
-
-      if(d.created_at){
-        noteDate.innerText=new Date(d.created_at)
-          .toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"});
-      } else noteDate.innerText="";
-
+      noteDate.innerText=d.created_at?
+        new Date(d.created_at).toLocaleDateString():
+        "";
       spawnHearts();
     });
 }
 
-/* LIKE (frontend-safe) */
+/* LIKE */
 function likeNote(){
   spawnHearts();
-  noteLikes.innerText="thank you for the love ♥";
 }
 
 /* SHARE */
 function shareNote(){
-  const text =
-    "I found this on A Note From the Heart:\n\n" +
-    noteMessage.innerText.slice(0,120) +
-    "\n\nhttps://anotefromtheheart.com";
-
-  navigator.clipboard.writeText(text);
-  alert("A gentle message has been copied to share 💗");
+  navigator.clipboard.writeText(
+    "A note from a stranger:\n\n"+noteMessage.innerText+
+    "\n\nhttps://anotefromtheheart.com"
+  );
+  alert("Copied to share 💗");
 }
 
 /* REPORT */
 function reportNote(){
   if(!currentId) return;
-  if(!confirm("Report this note for being harmful or inappropriate?")) return;
-  fetch("/report",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({noteId:currentId})})
+  if(!confirm("Report this note?")) return;
+  fetch("/report",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({noteId:currentId})})
   .then(loadNote);
 }
 
