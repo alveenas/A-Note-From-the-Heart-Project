@@ -6,12 +6,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* ======================
-   HOME ROUTE
-====================== */
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "home.html"));
-});
 
 /* ======================
    STATIC FILES
@@ -55,8 +49,10 @@ function adminAuth(req, res, next) {
 }
 
 /* ======================
-   HEALTH
+   ROUTES
 ====================== */
+
+/* Health check */
 app.get("/health", async (req, res) => {
   try {
     await pool.query("SELECT 1");
@@ -67,22 +63,21 @@ app.get("/health", async (req, res) => {
   }
 });
 
-/* ======================
-   SUBMIT NOTE
-====================== */
+/* Submit a note */
 app.post("/submit", async (req, res) => {
   try {
     const title = (req.body.title || "").toString().trim();
     const message = (req.body.message || "").toString().trim();
-    const tags = req.body.tags || [];
 
-    if (!message) return res.status(400).send("Missing message");
-    if (words(message) > 500) return res.status(400).send("Message too long");
+    if (!title || !message)
+      return res.status(400).send("Missing title or message");
+    if (words(message) > 500)
+      return res.status(400).send("Message too long");
 
     await pool.query(
-      `INSERT INTO notes (title, message, tags, likes, reportcount, hidden)
-       VALUES ($1, $2, $3, 0, 0, FALSE)`,
-      [title, message, tags]
+      `INSERT INTO notes (title, message, reportcount, hidden)
+       VALUES ($1, $2, 0, FALSE)`,
+      [title, message]
     );
 
     res.status(200).json({ ok: true });
@@ -92,44 +87,22 @@ app.post("/submit", async (req, res) => {
   }
 });
 
-/* ======================
-   RANDOM NOTE (TAG FILTER)
-====================== */
+/* Get random note */
 app.get("/random", async (req, res) => {
   try {
-    const tag = req.query.tag;
-    let q, params = [];
-
-    if (tag && tag !== "all") {
-      q = `
-        SELECT id, title, message, tags, likes, created_at
-        FROM notes
-        WHERE hidden = FALSE
-          AND $1 = ANY(tags)
-        ORDER BY random()
-        LIMIT 1
-      `;
-      params = [tag];
-    } else {
-      q = `
-        SELECT id, title, message, tags, likes, created_at
-        FROM notes
-        WHERE hidden = FALSE
-        ORDER BY random()
-        LIMIT 1
-      `;
-    }
-
-    const r = await pool.query(q, params);
+    const r = await pool.query(
+      `SELECT id, title, message
+       FROM notes
+       WHERE hidden = FALSE
+       ORDER BY random()
+       LIMIT 1`
+    );
 
     if (r.rows.length === 0) {
       return res.json({
         id: null,
         title: "No notes yet",
-        message: "Be the first to leave something kind.",
-        created_at: null,
-        tags: [],
-        likes: 0
+        message: "Be the first to leave something kind."
       });
     }
 
@@ -140,79 +113,7 @@ app.get("/random", async (req, res) => {
   }
 });
 
-/* ======================
-   PUBLIC SHARE PAGE
-====================== */
-app.get("/note/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    const r = await pool.query(
-      `SELECT title, message
-       FROM notes
-       WHERE id = $1 AND hidden = FALSE`,
-      [id]
-    );
-
-    if (r.rows.length === 0) {
-      return res.send("Note not found.");
-    }
-
-    const note = r.rows[0];
-
-    res.send(`
-      <!doctype html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>${note.title || "A Note From the Heart"}</title>
-        <meta property="og:title" content="A Note From the Heart">
-        <meta property="og:description" content="${note.message.slice(0,140)}">
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="https://anotefromtheheart.com/note/${id}">
-        <meta name="twitter:card" content="summary_large_image">
-        <style>
-          body{
-            font-family:system-ui;
-            background:#0b1026;
-            color:white;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            height:100vh;
-            text-align:center;
-            padding:30px;
-          }
-          .box{
-            max-width:640px;
-            background:rgba(255,255,255,.08);
-            border:1px solid rgba(255,255,255,.3);
-            border-radius:20px;
-            padding:30px;
-          }
-          h1{margin-top:0}
-          a{color:#ff9ecf;text-decoration:none}
-        </style>
-      </head>
-      <body>
-        <div class="box">
-          <h1>${note.title || "A Note From the Heart"}</h1>
-          <p>${note.message.replace(/\n/g,"<br>")}</p>
-          <br>
-          <a href="/">Read more notes →</a>
-        </div>
-      </body>
-      </html>
-    `);
-  } catch (err) {
-    console.error("SHARE ERROR:", err);
-    res.status(500).send("Server error");
-  }
-});
-
-/* ======================
-   COUNT
-====================== */
+/* Count notes */
 app.get("/count", async (req, res) => {
   try {
     const r = await pool.query(
@@ -227,29 +128,7 @@ app.get("/count", async (req, res) => {
   }
 });
 
-/* ======================
-   LIKE
-====================== */
-app.post("/like", async (req, res) => {
-  try {
-    const { noteId } = req.body;
-    if (!noteId) return res.status(400).send("Missing noteId");
-
-    await pool.query(
-      `UPDATE notes SET likes = likes + 1 WHERE id = $1`,
-      [noteId]
-    );
-
-    res.sendStatus(200);
-  } catch (err) {
-    console.error("LIKE ERROR:", err);
-    res.status(500).send("Server error");
-  }
-});
-
-/* ======================
-   REPORT
-====================== */
+/* Report */
 app.post("/report", async (req, res) => {
   try {
     const { noteId } = req.body;
@@ -279,9 +158,7 @@ app.post("/report", async (req, res) => {
   }
 });
 
-/* ======================
-   FEEDBACK
-====================== */
+/* Feedback */
 app.post("/feedback", async (req, res) => {
   try {
     const message = (req.body.message || "").toString().trim();
@@ -303,6 +180,7 @@ app.post("/feedback", async (req, res) => {
 /* ======================
    ADMIN
 ====================== */
+
 app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
@@ -310,7 +188,7 @@ app.get("/admin", (req, res) => {
 app.get("/admin/data", adminAuth, async (req, res) => {
   try {
     const notes = await pool.query(
-      `SELECT id, title, message, tags, likes, reportcount, hidden, created_at
+      `SELECT id, title, message, reportcount, hidden, created_at
        FROM notes
        ORDER BY created_at DESC NULLS LAST, id DESC`
     );
@@ -338,6 +216,22 @@ app.post("/admin/toggleHidden", adminAuth, async (req, res) => {
     res.sendStatus(200);
   } catch (err) {
     console.error("ADMIN TOGGLE ERROR:", err);
+    res.status(500).send("Server error");
+  }
+});
+
+app.post("/admin/resetReports", adminAuth, async (req, res) => {
+  try {
+    const { noteId } = req.body;
+    if (!noteId) return res.status(400).send("Missing noteId");
+
+    await pool.query(
+      `UPDATE notes SET reportcount = 0 WHERE id = $1`,
+      [noteId]
+    );
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("ADMIN RESET ERROR:", err);
     res.status(500).send("Server error");
   }
 });

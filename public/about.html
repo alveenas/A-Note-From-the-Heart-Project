@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About — A Note From the Heart</title>
+
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#b11b3a;
+  --navy:#0b1026;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Inter", system-ui, sans-serif;
+  font-weight:300;
+  color:white;
+  background:
+    radial-gradient(circle at top, #b11b3a 0%, #0b1026 70%);
+  overflow-x:hidden;
+}
+
+/* STARFIELD */
+.starfield{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+}
+
+.star{
+  position:absolute;
+  color:white;
+  font-size:10px;
+  opacity:.25;
+  animation:twinkle 5s infinite ease-in-out;
+}
+
+.big-star{
+  font-size:16px;
+  opacity:.6;
+  animation:sparkle 3s infinite ease-in-out;
+}
+
+@keyframes twinkle{
+  0%{opacity:.2}
+  50%{opacity:.6}
+  100%{opacity:.3}
+}
+
+@keyframes sparkle{
+  0%{opacity:.4; transform:scale(1)}
+  50%{opacity:1; transform:scale(1.4)}
+  100%{opacity:.5; transform:scale(1)}
+}
+
+/* TOP BAR */
+.top-bar{
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:18px;
+  z-index:20;
+}
+
+.nav-btn{
+  padding:10px 26px;
+  border:1px solid rgba(255,255,255,.4);
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  color:white;
+  letter-spacing:.25em;
+  font-size:12px;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.nav-btn:hover{
+  background:rgba(255,255,255,.18);
+  box-shadow:0 0 20px white;
+}
+
+/* HEART FLOAT */
+.float-heart{
+  position:absolute;
+  color:#ff2f5b;
+  font-size:16px;
+  animation:floatUp 2s ease forwards;
+  pointer-events:none;
+}
+
+@keyframes floatUp{
+  0%{transform:translateY(0) scale(1); opacity:1}
+  100%{transform:translateY(-140px) scale(1.6); opacity:0}
+}
+
+/* LAYOUT */
+.wrap{
+  position:relative;
+  z-index:10;
+  max-width:720px;
+  margin:0 auto;
+  padding:120px 24px 80px;
+  text-align:center;
+}
+
+/* TITLE */
+.title{
+  font-size:42px;
+  letter-spacing:.25em;
+  text-shadow:0 0 25px white;
+  margin-bottom:18px;
+}
+
+/* SECTIONS */
+.section{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:22px;
+  padding:28px 32px;
+  margin-bottom:26px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  backdrop-filter: blur(6px);
+  text-align:left;
+}
+
+.section h2{
+  font-size:18px;
+  letter-spacing:.2em;
+  margin-top:0;
+  margin-bottom:14px;
+  text-align:center;
+}
+
+.section p{
+  font-size:16px;
+  line-height:1.7;
+  opacity:.95;
+  margin-bottom:14px;
+}
+
+/* LIST */
+.section ul{
+  padding-left:18px;
+  line-height:1.7;
+  opacity:.95;
+}
+
+.section li{
+  margin-bottom:8px;
+}
+
+/* FOOT NOTE */
+.footer-note{
+  margin-top:30px;
+  font-size:13px;
+  opacity:.7;
+  line-height:1.6;
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="starfield" id="stars"></div>
+
+<!-- TOP NAV -->
+<div class="top-bar">
+  <button class="nav-btn" onclick="location.href='home.html'">HOME</button>
+  <button class="nav-btn" onclick="location.href='submit.html'">SUBMIT</button>
+</div>
+
+<div class="wrap">
+
+  <div class="title">ABOUT</div>
+
+  <!-- ABOUT STORY -->
+  <div class="section">
+    <h2>ABOUT THIS PROJECT</h2>
+
+    <p>
+      According to the CDC, about 40% of U.S. high school students have reported
+      feeling persistently sad or hopeless in recent years.
+    </p>
+
+    <p>
+      As a student, I created this website because I understand how important a support system is.
+      I’ve always felt a little better when a stranger did something kind —
+      a small moment that reminded me I wasn’t alone.
+    </p>
+
+    <p>
+      I wanted to create a space where those moments could exist for other people too.
+      A place where words can travel quietly from one person to another.
+    </p>
+
+    <p>
+      This project is simple on purpose.
+      It’s not meant to replace real support or professional help.
+      It’s just a place where people can leave gentle notes for each other.
+    </p>
+
+    <p style="text-align:center; font-style:italic; opacity:.85;">
+      Somewhere, someone will read what you write when they need it most.
+    </p>
+  </div>
+
+  <!-- RULES -->
+  <div class="section">
+    <h2>COMMUNITY GUIDELINES</h2>
+
+    <ul>
+      <li>Your note will be anonymous and publicly visible.</li>
+      <li>Do not include names, contact info, or anything identifying.</li>
+      <li>Notes should be kind, respectful, and non-harmful.</li>
+      <li>This space is not for hate, threats, harassment, or graphic content.</li>
+      <li>Inappropriate or harmful notes may be removed.</li>
+    </ul>
+  </div>
+
+  <!-- TRANSPARENCY -->
+  <div class="section">
+    <h2>SAFETY & TRANSPARENCY</h2>
+
+    <p>
+      Notes can be reported by users.
+      If a note is reported multiple times, it is automatically hidden.
+    </p>
+
+    <p>
+      This site does not collect personal information.
+      Nothing is tracked beyond the note itself.
+    </p>
+
+    <p>
+      If you are in immediate distress or danger,
+      please reach out to someone you trust or a professional.
+      This project cannot replace real-world support.
+    </p>
+  </div>
+
+  <div class="footer-note">
+    thank you for being here 🤍  
+    you matter more than you know.
+  </div>
+</div>
+
+<script>
+// STARS
+const symbols = ["✦","✧","⋆","·"];
+for(let i=0;i<140;i++){
+  const s=document.createElement("div");
+  s.className = Math.random()>.8 ? "star big-star" : "star";
+  s.innerText = symbols[Math.floor(Math.random()*symbols.length)];
+  s.style.left=Math.random()*100+"%";
+  s.style.top=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*6+"s";
+  document.getElementById("stars").appendChild(s);
+}
+
+// FLOATING HEARTS ON CLICK
+document.body.addEventListener("click", e=>{
+  const h=document.createElement("div");
+  h.className="float-heart";
+  h.innerText="♥";
+  h.style.left=e.clientX+"px";
+  h.style.top=e.clientY+"px";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),2000);
+});
+</script>
+
+</body>
+</html>

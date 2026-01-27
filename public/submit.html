@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Submit a Note</title>
+
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#b11b3a;
+  --navy:#0b1026;
+}
+
+body{
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+  font-family:"Inter", system-ui, sans-serif;
+  font-weight:300;
+  color:white;
+  background:
+    radial-gradient(circle at top, #b11b3a 0%, #0b1026 70%);
+}
+
+/* STARFIELD */
+.starfield{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+}
+
+.star{
+  position:absolute;
+  color:white;
+  font-size:10px;
+  opacity:.25;
+  animation:twinkle 5s infinite ease-in-out;
+}
+
+.big-star{
+  font-size:16px;
+  opacity:.6;
+  animation:sparkle 3s infinite ease-in-out;
+}
+
+@keyframes twinkle{
+  0%{opacity:.2}
+  50%{opacity:.6}
+  100%{opacity:.3}
+}
+
+@keyframes sparkle{
+  0%{opacity:.4; transform:scale(1)}
+  50%{opacity:1; transform:scale(1.4)}
+  100%{opacity:.5; transform:scale(1)}
+}
+
+/* TOP BAR */
+.top-bar{
+  position:absolute;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  z-index:20;
+}
+
+.nav-row{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.nav-btn{
+  padding:10px 26px;
+  border:1px solid rgba(255,255,255,.4);
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  color:white;
+  letter-spacing:.25em;
+  font-size:12px;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.nav-btn:hover{
+  background:rgba(255,255,255,.18);
+  box-shadow:0 0 20px white;
+}
+
+.top-heart{
+  color:#ff2f5b;
+  font-size:18px;
+  text-shadow:0 0 14px #ff2f5b;
+  animation:heartPulse 2s infinite ease-in-out;
+}
+
+@keyframes heartPulse{
+  0%{opacity:.6; transform:scale(1)}
+  50%{opacity:1; transform:scale(1.4)}
+  100%{opacity:.6; transform:scale(1)}
+}
+
+/* COUNT */
+#count{
+  font-size:12px;
+  letter-spacing:.35em;
+  opacity:.7;
+  text-shadow:0 0 14px white;
+  animation:countGlow 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes countGlow{
+  from{text-shadow:0 0 8px white}
+  to{text-shadow:0 0 22px white}
+}
+
+/* LAYOUT */
+.wrap{
+  position:relative;
+  z-index:10;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:22px;
+  text-align:center;
+}
+
+.title{
+  font-size:44px;
+  letter-spacing:.25em;
+  text-shadow:0 0 25px white;
+}
+
+.subtitle{
+  max-width:520px;
+  font-size:15px;
+  letter-spacing:.12em;
+  opacity:.9;
+  line-height:1.7;
+}
+
+/* FORM */
+input, textarea{
+  width:340px;
+  padding:12px 14px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.4);
+  border-radius:14px;
+  color:white;
+  font-family:"Inter";
+  font-size:14px;
+  outline:none;
+}
+
+textarea{
+  min-height:140px;
+  resize:none;
+}
+
+input::placeholder,
+textarea::placeholder{
+  color:rgba(255,255,255,.6);
+}
+
+/* TAGS */
+.tags{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-top:6px;
+}
+
+.tag{
+  padding:6px 14px;
+  border:1px solid rgba(255,255,255,.4);
+  border-radius:999px;
+  cursor:pointer;
+  font-size:12px;
+  letter-spacing:.1em;
+  opacity:.6;
+  transition:.25s;
+}
+
+.tag:hover{opacity:.9}
+
+.tag.active{
+  background:white;
+  color:#b11b3a;
+  opacity:1;
+  box-shadow:0 0 12px white;
+}
+
+/* BUTTONS */
+.submit-btn{
+  margin-top:14px;
+  padding:12px 36px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.15);
+  color:white;
+  letter-spacing:.25em;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.submit-btn:hover{
+  background:rgba(255,255,255,.28);
+  box-shadow:0 0 30px white;
+}
+
+/* HEART ANIMATION */
+.fly-heart{
+  position:absolute;
+  color:#ff2f5b;
+  font-size:18px;
+  animation:fly 1.6s ease forwards;
+}
+
+@keyframes fly{
+  0%{transform:translateY(0) scale(1); opacity:1}
+  100%{transform:translateY(-160px) scale(1.8); opacity:0}
+}
+</style>
+</head>
+
+<body>
+
+<div class="starfield" id="stars"></div>
+
+<div class="top-bar">
+  <div class="nav-row">
+    <button class="nav-btn" onclick="location.href='home.html'">HOME</button>
+    <span class="top-heart">♥</span>
+    <button class="nav-btn" onclick="location.href='about.html'">ABOUT</button>
+  </div>
+  <div id="count">LOADING</div>
+</div>
+
+<div class="wrap">
+  <div class="title">SUBMIT A NOTE</div>
+
+  <div class="subtitle">
+    write something that you want someone else to know.  
+    it can be a memory, something that inspired you, something silly,  
+    or just something you really want to say.
+  </div>
+
+  <input id="title" placeholder="title (optional)">
+  <textarea id="message" placeholder="your note..."></textarea>
+
+  <div class="tags" id="tags">
+    <div class="tag">kindness</div>
+    <div class="tag">motivational</div>
+    <div class="tag">silly</div>
+    <div class="tag">love</div>
+    <div class="tag">sad</div>
+    <div class="tag">hope</div>
+  </div>
+
+  <button class="submit-btn" onclick="submitNote()">SEND</button>
+  <button class="submit-btn" onclick="location.href='feedback.html'">
+    MESSAGE THE CREATOR
+  </button>
+</div>
+
+<script>
+// STARS
+const symbols = ["✦","✧","⋆","·"];
+for(let i=0;i<120;i++){
+  const s=document.createElement("div");
+  s.className = Math.random()>.8 ? "star big-star" : "star";
+  s.innerText = symbols[Math.floor(Math.random()*symbols.length)];
+  s.style.left=Math.random()*100+"%";
+  s.style.top=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*6+"s";
+  document.getElementById("stars").appendChild(s);
+}
+
+// COUNT
+fetch("/count")
+.then(r=>r.json())
+.then(d=>{
+  const el=document.getElementById("count");
+  const text=d.total+" NOTES SHARED";
+  let i=0,dir=1;
+  function loop(){
+    el.innerText=text.slice(0,i);
+    if(dir===1){i++; if(i>text.length){dir=-1; setTimeout(loop,2400); return;}}
+    else{i--; if(i<0){dir=1; setTimeout(loop,1400); return;}}
+    setTimeout(loop,150);
+  }
+  loop();
+});
+
+// TAG SELECT
+document.querySelectorAll(".tag").forEach(t=>{
+  t.onclick=()=>t.classList.toggle("active");
+});
+
+// SUBMIT
+function submitNote(){
+  const title=document.getElementById("title").value;
+  const msg=document.getElementById("message").value;
+  const tags=[...document.querySelectorAll(".tag.active")].map(t=>t.innerText);
+
+  if(!msg.trim()) return alert("Write something first.");
+
+  fetch("/submit",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ title, message:msg, tags })
+  }).then(res=>{
+    if(!res.ok) throw 1;
+
+    // flying hearts
+    for(let i=0;i<6;i++){
+      const h=document.createElement("div");
+      h.className="fly-heart";
+      h.innerText="♥";
+      h.style.left=50+Math.random()*80-40+"%";
+      h.style.top="60%";
+      h.style.animationDelay=i*0.12+"s";
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(),1600);
+    }
+
+    document.getElementById("title").value="";
+    document.getElementById("message").value="";
+
+    setTimeout(()=>{
+      alert("somewhere, someone will read this when they need it 💗");
+      location.href="explore.html";
+    },900);
+  }).catch(()=>{
+    alert("Something went wrong. Try again.");
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Note From the Heart</title>
+
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#b11b3a;
+  --navy:#0b1026;
+}
+
+body{
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+  font-family:"Inter", system-ui, sans-serif;
+  font-weight:300;
+  color:white;
+  background:
+    radial-gradient(circle at top, #b11b3a 0%, #0b1026 70%);
+}
+
+/* STARFIELD */
+.starfield{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+}
+
+.star{
+  position:absolute;
+  color:white;
+  font-size:10px;
+  opacity:.22;
+  animation:twinkle 5s infinite ease-in-out;
+}
+
+.big-star{
+  font-size:16px;
+  opacity:.55;
+  animation:sparkle 3s infinite ease-in-out;
+}
+
+@keyframes twinkle{
+  0%{opacity:.15}
+  50%{opacity:.5}
+  100%{opacity:.2}
+}
+
+@keyframes sparkle{
+  0%{opacity:.4; transform:scale(1)}
+  50%{opacity:1; transform:scale(1.4)}
+  100%{opacity:.5; transform:scale(1)}
+}
+
+/* LAYOUT */
+.wrap{
+  position:relative;
+  z-index:10;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:26px;
+}
+
+/* TOP */
+.top-bar{
+  position:absolute;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:20;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.about-btn{
+  padding:10px 28px;
+  border:1px solid rgba(255,255,255,.4);
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  color:white;
+  letter-spacing:.25em;
+  font-size:12px;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.about-btn:hover{
+  background:rgba(255,255,255,.18);
+  box-shadow:0 0 20px white;
+}
+
+.top-heart{
+  color:#ff2f5b;
+  font-size:16px;
+  text-shadow:0 0 12px #ff2f5b;
+  animation:heartPulse 2.2s infinite ease-in-out;
+}
+
+@keyframes heartPulse{
+  0%{opacity:.6; transform:scale(1)}
+  50%{opacity:1; transform:scale(1.4)}
+  100%{opacity:.6; transform:scale(1)}
+}
+
+/* COUNT */
+#count{
+  font-size:22px;
+  letter-spacing:.4em;
+  text-shadow:0 0 20px white;
+}
+
+/* TITLE */
+.title{
+  font-size:52px;
+  font-weight:200;
+  letter-spacing:.25em;
+  text-align:center;
+  text-shadow:0 0 25px white;
+}
+
+/* SUBTITLE */
+.subtitle{
+  font-size:15px;
+  letter-spacing:.15em;
+  opacity:.85;
+  max-width:600px;
+  text-align:center;
+}
+
+/* BUTTONS */
+.buttons{
+  display:flex;
+  gap:60px;
+  margin-top:20px;
+}
+
+.envelope{
+  width:150px;
+  height:100px;
+  position:relative;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.4);
+  border-radius:14px;
+  cursor:pointer;
+  transition:.4s;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.envelope:hover{
+  transform:translateY(-10px) scale(1.08);
+  box-shadow:0 30px 90px rgba(0,0,0,.8);
+}
+
+.envelope:before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:60%;
+  border-bottom:1px solid rgba(255,255,255,.4);
+  clip-path:polygon(0 0,100% 0,50% 70%);
+  background:rgba(255,255,255,.08);
+}
+
+/* heart */
+.heart{
+  width:20px;
+  height:20px;
+  background:#ff2f5b;
+  transform:rotate(45deg);
+  position:relative;
+  box-shadow:0 0 12px #ff2f5b;
+  animation:heartGlow 3s infinite ease-in-out;
+}
+
+.heart:before,
+.heart:after{
+  content:"";
+  width:20px;
+  height:20px;
+  background:#ff2f5b;
+  border-radius:50%;
+  position:absolute;
+}
+
+.heart:before{left:-10px}
+.heart:after{top:-10px}
+
+@keyframes heartGlow{
+  0%{box-shadow:0 0 8px #ff2f5b}
+  50%{box-shadow:0 0 22px #ff2f5b}
+  100%{box-shadow:0 0 8px #ff2f5b}
+}
+
+.label{
+  margin-top:12px;
+  font-size:13px;
+  letter-spacing:.25em;
+  text-align:center;
+  opacity:.9;
+}
+
+/* SOCIALS */
+.socials{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+  z-index:20;
+}
+
+.socials a{
+  width:26px;
+  height:26px;
+  opacity:.7;
+  transition:.3s;
+}
+
+.socials a:hover{
+  opacity:1;
+  filter:drop-shadow(0 0 10px white);
+}
+
+.socials svg{
+  width:100%;
+  height:100%;
+  fill:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="starfield" id="stars"></div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <span class="top-heart">♥</span>
+  <button class="about-btn" onclick="location.href='about.html'">ABOUT</button>
+  <span class="top-heart">♥</span>
+</div>
+
+<div class="wrap">
+  <div id="count">LOADING</div>
+  <div class="title" id="title"></div>
+  <div class="subtitle">
+    a place where strangers can leave a gentle note to make your day better
+  </div>
+
+  <div class="buttons">
+    <div>
+      <div class="envelope" onclick="location.href='submit.html'">
+        <div class="heart"></div>
+      </div>
+      <div class="label">SUBMIT</div>
+    </div>
+
+    <div>
+      <div class="envelope" onclick="location.href='explore.html'">
+        <div class="heart"></div>
+      </div>
+      <div class="label">EXPLORE</div>
+    </div>
+  </div>
+</div>
+
+<!-- SOCIALS -->
+<div class="socials">
+  <a href="https://instagram.com/anotefromheartproject" target="_blank">
+    <svg viewBox="0 0 24 24">
+      <path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm5 5a5 5 0 100 10 5 5 0 000-10zm6.5-.9a1.1 1.1 0 11-2.2 0 1.1 1.1 0 012.2 0z"/>
+    </svg>
+  </a>
+
+  <a href="https://tiktok.com/@anotefromtheheart" target="_blank">
+    <svg viewBox="0 0 24 24">
+      <path d="M21 8.5a6.5 6.5 0 01-5-2V16a5 5 0 11-5-5v2.3a2.7 2.7 0 102.7 2.7V2h2.3a4.2 4.2 0 004.2 4.2z"/>
+    </svg>
+  </a>
+</div>
+
+<script>
+// STARS
+const symbols = ["✦","✧","⋆","·"];
+for(let i=0;i<140;i++){
+  const s=document.createElement("div");
+  s.className = Math.random()>.8 ? "star big-star" : "star";
+  s.innerText = symbols[Math.floor(Math.random()*symbols.length)];
+  s.style.left=Math.random()*100+"%";
+  s.style.top=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*6+"s";
+  document.getElementById("stars").appendChild(s);
+}
+
+// COUNT typing
+fetch("/count")
+.then(r=>r.json())
+.then(d=>{
+  const el=document.getElementById("count");
+  const text=d.total+" NOTES SHARED";
+  let i=0,dir=1;
+  function loop(){
+    el.innerText=text.slice(0,i);
+    if(dir===1){i++; if(i>text.length){dir=-1; setTimeout(loop,2400); return;}}
+    else{i--; if(i<0){dir=1; setTimeout(loop,1400); return;}}
+    setTimeout(loop,160);
+  }
+  loop();
+});
+
+// TITLE typing
+const titleText="A NOTE FROM THE HEART";
+const titleEl=document.getElementById("title");
+let ti=0,tdir=1;
+
+function titleLoop(){
+  titleEl.innerText=titleText.slice(0,ti);
+  if(tdir===1){ti++; if(ti>titleText.length){tdir=-1; setTimeout(titleLoop,2600); return;}}
+  else{ti--; if(ti<0){tdir=1; setTimeout(titleLoop,1400); return;}}
+  setTimeout(titleLoop,180);
+}
+titleLoop();
+</script>
+
+</body>
+</html>
