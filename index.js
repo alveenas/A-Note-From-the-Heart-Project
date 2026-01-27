@@ -141,76 +141,6 @@ app.get("/random", async (req, res) => {
 });
 
 /* ======================
-   PUBLIC SHARE PAGE
-====================== */
-app.get("/note/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    const r = await pool.query(
-      `SELECT title, message
-       FROM notes
-       WHERE id = $1 AND hidden = FALSE`,
-      [id]
-    );
-
-    if (r.rows.length === 0) {
-      return res.send("Note not found.");
-    }
-
-    const note = r.rows[0];
-
-    res.send(`
-      <!doctype html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>${note.title || "A Note From the Heart"}</title>
-        <meta property="og:title" content="A Note From the Heart">
-        <meta property="og:description" content="${note.message.slice(0,140)}">
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="https://anotefromtheheart.com/note/${id}">
-        <meta name="twitter:card" content="summary_large_image">
-        <style>
-          body{
-            font-family:system-ui;
-            background:#0b1026;
-            color:white;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            height:100vh;
-            text-align:center;
-            padding:30px;
-          }
-          .box{
-            max-width:640px;
-            background:rgba(255,255,255,.08);
-            border:1px solid rgba(255,255,255,.3);
-            border-radius:20px;
-            padding:30px;
-          }
-          h1{margin-top:0}
-          a{color:#ff9ecf;text-decoration:none}
-        </style>
-      </head>
-      <body>
-        <div class="box">
-          <h1>${note.title || "A Note From the Heart"}</h1>
-          <p>${note.message.replace(/\n/g,"<br>")}</p>
-          <br>
-          <a href="/">Read more notes →</a>
-        </div>
-      </body>
-      </html>
-    `);
-  } catch (err) {
-    console.error("SHARE ERROR:", err);
-    res.status(500).send("Server error");
-  }
-});
-
-/* ======================
    COUNT
 ====================== */
 app.get("/count", async (req, res) => {
@@ -357,6 +287,24 @@ app.post("/admin/delete", adminAuth, async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+
+/* ===== NEW: UPDATE TAGS FROM ADMIN ===== */
+app.post("/admin/updateTags", adminAuth, async (req,res)=>{
+  try{
+    const { noteId, tags } = req.body;
+    if(!noteId) return res.status(400).send("Missing noteId");
+
+    await pool.query(
+      `UPDATE notes SET tags = $1 WHERE id = $2`,
+      [tags, noteId]
+    );
+    res.sendStatus(200);
+  }catch(err){
+    console.error("TAG UPDATE ERROR:", err);
+    res.status(500).send("Server error");
+  }
+});
+/* ===================================== */
 
 /* ======================
    START

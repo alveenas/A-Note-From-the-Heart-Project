@@ -4,23 +4,14 @@
   <meta charset="utf-8">
   <title>Admin</title>
   <style>
-    body{font-family:sans-serif;padding:20px;background:#f5f6fa}
-    input,button{padding:6px;margin:4px}
-    .note{
-      border:1px solid #ccc;
-      padding:10px;
-      margin:10px 0;
-      background:white;
-      border-radius:8px;
-    }
+    body{font-family:sans-serif;padding:20px;background:#f5f5f5}
+    input,button{padding:8px;margin:4px}
+    .note{border:1px solid #ccc;padding:12px;margin:10px 0;background:white}
     .hidden{opacity:.4}
     .tags{margin-top:6px}
     .tag{
       display:inline-block;
-      padding:3px 8px;
-      border-radius:999px;
-      background:#eee;
-      margin:2px;
+      margin:2px 6px 2px 0;
       font-size:12px;
     }
   </style>
@@ -39,6 +30,8 @@
 <div id="feedback"></div>
 
 <script>
+const ALL_TAGS = ["kindness","motivational","silly","love","sad","hope"];
+
 function headers(){
   return {
     "Content-Type":"application/json",
@@ -58,19 +51,33 @@ function load(){
         const div=document.createElement("div");
         div.className="note"+(n.hidden?" hidden":"");
 
-        const tagString = (n.tags || []).join(", ");
+        let tagHtml = "";
+        ALL_TAGS.forEach(t=>{
+          const checked = (n.tags || []).includes(t) ? "checked" : "";
+          tagHtml += `
+            <label class="tag">
+              <input type="checkbox" ${checked}
+                onchange="updateTags(${n.id})"
+                data-id="${n.id}"
+                value="${t}">
+              ${t}
+            </label>
+          `;
+        });
 
         div.innerHTML=`
-          <b>${n.title}</b><br>
+          <b>${n.title || "(no title)"}</b><br>
           ${n.message}<br><br>
-
           reports: ${n.reportcount}<br>
 
-          tags:
-          <input id="tags-${n.id}" value="${tagString}" placeholder="kindness, hope, sad"><br>
+          <div class="tags">
+            <b>Tags:</b><br>
+            ${tagHtml}
+          </div><br>
 
-          <button onclick="saveTags(${n.id})">Save Tags</button>
-          <button onclick="toggle(${n.id},${!n.hidden})">${n.hidden?"Unhide":"Hide"}</button>
+          <button onclick="toggle(${n.id},${!n.hidden})">
+            ${n.hidden?"Unhide":"Hide"}
+          </button>
           <button onclick="del(${n.id})">Delete</button>
         `;
         notes.appendChild(div);
@@ -78,24 +85,12 @@ function load(){
 
       feedback.innerHTML="";
       d.feedback.forEach(f=>{
-        feedback.innerHTML+=`<div class="note">${f.message}</div>`;
+        feedback.innerHTML+=`
+          <div class="note">${f.message}</div>
+        `;
       });
     })
     .catch(()=>alert("Wrong password"));
-}
-
-function saveTags(id){
-  const raw = document.getElementById("tags-"+id).value;
-  const tags = raw.split(",").map(t=>t.trim()).filter(Boolean);
-
-  fetch("/admin/updateTags",{
-    method:"POST",
-    headers:headers(),
-    body:JSON.stringify({ noteId:id, tags })
-  }).then(()=>{
-    alert("Tags saved");
-    load();
-  });
 }
 
 function toggle(id,val){
@@ -113,6 +108,19 @@ function del(id){
     headers:headers(),
     body:JSON.stringify({noteId:id})
   }).then(load);
+}
+
+function updateTags(id){
+  const checkboxes = document.querySelectorAll(
+    `input[data-id="${id}"]:checked`
+  );
+  const tags = [...checkboxes].map(c=>c.value);
+
+  fetch("/admin/updateTags",{
+    method:"POST",
+    headers:headers(),
+    body:JSON.stringify({noteId:id,tags})
+  });
 }
 </script>
 
